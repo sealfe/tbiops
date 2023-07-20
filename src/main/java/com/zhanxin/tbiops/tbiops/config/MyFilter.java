@@ -1,23 +1,19 @@
 package com.zhanxin.tbiops.tbiops.config;
 
 import com.zhanxin.tbiops.tbiops.dto.JsonException;
-import com.zhanxin.tbiops.tbiops.http.acl.BkTokenService;
 import com.zhanxin.tbiops.tbiops.repository.TokenCookie;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
 @Order(1)
 public class MyFilter implements Filter {
 
-
-    @Autowired
-    private BkTokenService bkTokenService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -30,9 +26,14 @@ public class MyFilter implements Filter {
             }
             String token = httpServletRequest.getParameter("token");
             if (token == null) {
-                throw new JsonException("10023", "token is null");
+                ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is null.");
+                return;
             }
-            TokenCookie.checkCookie(token);
+            Boolean cookieValid = TokenCookie.cookieValid(token);
+            if (!cookieValid) {
+                ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is not valid.");
+                return;
+            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
