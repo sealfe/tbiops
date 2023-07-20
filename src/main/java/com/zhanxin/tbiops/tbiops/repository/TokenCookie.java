@@ -2,6 +2,7 @@ package com.zhanxin.tbiops.tbiops.repository;
 
 import com.google.common.collect.Maps;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class TokenCookie {
 
     public static void addCookie(String key, Map<String, String> newCookieMap) {
         Map<String, String> cookieMapOrDefault = cookieMap.getOrDefault(key, Maps.newHashMap());
-        cookieMapOrDefault.putAll(newCookieMap);
+        newCookieMap.entrySet().stream().filter(n -> n.getValue() != null && StringUtils.isNotBlank(n.getValue().toString())).forEach(n -> cookieMapOrDefault.put(n.getKey(), n.getValue()));
         cookieMap.put(key, cookieMapOrDefault);
     }
 

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +70,26 @@ public class BkTokenService {
         TokenCookie.addCookie(token, cookieMap);
         return cookieMap;
     }
+
+
+     public Map<String, String> getPrivateCookieMap(String token) {
+        Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
+        String cookieStr = cookieMap.entrySet().stream().map(n -> n.getKey() + "=" + n.getValue()).collect(Collectors.joining(";"));
+        GetRequest cookie = Unirest.get("http://cmdb.bkce7.tobizit.com/#/index").header("Cookie", cookieStr).header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
+        HttpResponse<Object> object = cookie.asObject(Object.class);
+
+        Cookies cookies = object.getCookies();
+        cookies.stream().forEach(n -> {
+            cookieMap.put(n.getName(), n.getValue());
+        });
+        TokenCookie.addCookie(token, cookieMap);
+        return cookieMap;
+    }
+
+
+
+
+
 
 
     public Object requestUrl(String s, String token) {

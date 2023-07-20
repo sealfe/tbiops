@@ -6,3 +6,4 @@ bk:
     app_code:  new-cmdb
     app_secret:  pnzCmIC7lXkhrwjIGl4HTJz96Pc6OMtRUFls
     open_url: http://bkapi.bkce7.tobizit.com/api
+    cmdb_url: http://cmdb.bkce7.tobizit.com/api
