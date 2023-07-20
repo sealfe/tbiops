@@ -1,12 +1,14 @@
 package com.zhanxin.tbiops.tbiops.api;
 
+import com.google.gson.JsonObject;
 import com.zhanxin.tbiops.tbiops.dto.JsonResponse;
+import com.zhanxin.tbiops.tbiops.http.acl.BkRequestService;
 import com.zhanxin.tbiops.tbiops.http.acl.BkTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * @author by fengww
@@ -14,13 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description
  * @Date 2023/7/19 21:59
  */
-@RequestMapping("bk_token")
+@RequestMapping("bkapi")
 @RestController
 public class BaseRequestApi {
 
 
     @Autowired
     private BkTokenService bkTokenService;
+
+    @Autowired
+    private BkRequestService bkRequestService;
 
 
     @PutMapping("login")
@@ -32,6 +37,18 @@ public class BaseRequestApi {
     @RequestMapping("console/get_version_info/")
     public JsonResponse<Object> getCookie(@RequestParam String token) {
         return JsonResponse.success(bkTokenService.requestUrl("console/get_version_info/", token));
+    }
+
+
+    @RequestMapping("open/api/**")
+    public JsonResponse<Object> openApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
+        jsonObject = Optional.ofNullable(jsonObject).orElse(new JsonObject());
+        return JsonResponse.success(bkRequestService.openRequestUrl(httpRequest,jsonObject));
+    }
+
+    @RequestMapping("private/api/**")
+    public JsonResponse<Object> privateApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
+        return JsonResponse.success(bkRequestService.privateRequestUrl(httpRequest,jsonObject));
     }
 
 

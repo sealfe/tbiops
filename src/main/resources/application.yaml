@@ -1,6 +1,8 @@
 server:
   port: 11901
-base:
-  url: https://bkce7.tobizit.com
-  app_code:
-  app_secret:
+bk:
+  base:
+    url: https://bkce7.tobizit.com
+    app_code:  new-cmdb
+    app_secret:  pnzCmIC7lXkhrwjIGl4HTJz96Pc6OMtRUFls
+    open_url: https://bkapi.bkce7.tobizit.com/api

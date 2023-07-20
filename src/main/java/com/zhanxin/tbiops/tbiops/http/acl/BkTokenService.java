@@ -6,11 +6,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author by fengww
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 @Service
 public class BkTokenService {
 
-    @Value("${base.baseUrl}")
+    @Value("${bk.base.url}")
     private String baseUrl;
 
 
@@ -79,4 +79,19 @@ public class BkTokenService {
         TokenCookie.addCookie(token, cookieMap1);
         return object.getBody();
     }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+
+    public void updateCookieMap(String token, Cookies cookies) {
+        Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
+        cookies.forEach(n -> {
+            cookieMap.put(n.getName(), n.getValue());
+        });
+        TokenCookie.addCookie(token, cookieMap);
+    }
+
+
 }
