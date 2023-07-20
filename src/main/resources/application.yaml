@@ -1,6 +1,6 @@
 server:
-  port: 8080
+  port: 11901
 base:
-  url:
+  url: https://bkce7.tobizit.com
   app_code:
   app_secret:

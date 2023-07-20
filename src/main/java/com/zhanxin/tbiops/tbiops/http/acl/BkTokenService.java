@@ -3,6 +3,7 @@ package com.zhanxin.tbiops.tbiops.http.acl;
 import com.zhanxin.tbiops.tbiops.repository.TokenCookie;
 import kong.unirest.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +21,16 @@ import java.util.stream.Stream;
 @Service
 public class BkTokenService {
 
+    @Value("${base.baseUrl}")
+    private String baseUrl;
+
 
     public String getToken(String username, String password) {
         Unirest.config().verifySsl(false);
         Map<String, String> cookieMap = getLoginCookieMap();
         List<Cookie> collect = cookieMap.entrySet().stream().map(n -> new Cookie(n.getKey(), n.getValue())).collect(Collectors.toList());
         String bkloginCsrftoken = cookieMap.get("bklogin_csrftoken");
-        MultipartBody body = Unirest.post("https://bkce7.tobizit.com/login/?c_url=/")
+        MultipartBody body = Unirest.post(baseUrl + "/login/?c_url=/")
                 .field("csrfmiddlewaretoken", bkloginCsrftoken)
                 .field("username", username)
                 .field("password", password).cookie(collect);
@@ -42,7 +46,7 @@ public class BkTokenService {
 
     public Map<String, String> getLoginCookieMap() {
         Unirest.config().verifySsl(false);
-        HttpResponse<Object> object = Unirest.get("https://bkce7.tobizit.com/login/?c_url=/").asObject(Object.class);
+        HttpResponse<Object> object = Unirest.get(baseUrl + "/login/?c_url=/").asObject(Object.class);
         Cookies cookies = object.getCookies();
         return cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
     }
@@ -51,7 +55,7 @@ public class BkTokenService {
     public Map<String, String> getCookieMap(String token) {
         Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
         String cookieStr = cookieMap.entrySet().stream().map(n -> n.getKey() + "=" + n.getValue()).collect(Collectors.joining(";"));
-        GetRequest cookie = Unirest.get("https://bkce7.tobizit.com/console/").header("Cookie", cookieStr).header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
+        GetRequest cookie = Unirest.get(baseUrl + "/console/").header("Cookie", cookieStr).header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
         HttpResponse<Object> object = cookie.asObject(Object.class);
 
         Cookies cookies = object.getCookies();
@@ -66,7 +70,7 @@ public class BkTokenService {
     public Object requestUrl(String s, String token) {
         Map<String, String> cookieMap1 = getCookieMap(token);
         String cookieStr = cookieMap1.entrySet().stream().map(n -> n.getKey() + "=" + n.getValue()).collect(Collectors.joining(";"));
-        HttpRequestWithBody post = Unirest.post("https://bkce7.tobizit.com/" + s).header("Cookie", cookieStr).header("X-Csrftoken", cookieMap1.get("bk_csrftoken"));
+        HttpRequestWithBody post = Unirest.post(baseUrl + s).header("Cookie", cookieStr).header("X-Csrftoken", cookieMap1.get("bk_csrftoken"));
         HttpResponse<Object> object = post.asObject(Object.class);
         Cookies cookies = object.getCookies();
         cookies.stream().forEach(n -> {
