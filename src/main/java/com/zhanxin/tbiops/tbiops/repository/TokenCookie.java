@@ -1,6 +1,7 @@
 package com.zhanxin.tbiops.tbiops.repository;
 
 import com.google.common.collect.Maps;
+import com.zhanxin.tbiops.tbiops.dto.JsonException;
 import lombok.Data;
 
 import java.util.Map;
@@ -30,4 +31,9 @@ public class TokenCookie {
     }
 
 
+    public static void checkCookie(String token) {
+        if(!cookieMap.containsKey(token)){
+            throw new JsonException("1023","请先登录");
+        }
+    }
 }

@@ -28,7 +28,7 @@ public class BaseRequestApi {
     private BkRequestService bkRequestService;
 
 
-    @PutMapping("login")
+    @RequestMapping("login")
     public JsonResponse<String> login(@RequestParam String username, @RequestParam String password) {
         return JsonResponse.success(bkTokenService.getToken(username, password));
     }

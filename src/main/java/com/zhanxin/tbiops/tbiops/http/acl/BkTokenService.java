@@ -40,7 +40,7 @@ public class BkTokenService {
         JSONObject jsonObject = object.getBody().getObject();
         Map resultMap = toObject(jsonObject.toString(), Map.class);
         if (Objects.equals(resultMap.get("result"), false)) {
-            throw new JsonException(resultMap.getOrDefault("code", "").toString(), resultMap.getOrDefault("message", "").toString());
+            throw new JsonException(resultMap.getOrDefault("code", "1023").toString(), resultMap.getOrDefault("message", "账户或者密码错误，请重新输入").toString());
         }
         Cookies cookies = object.getCookies();
         Map<String, String> newCookieMap = cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
@@ -107,4 +107,5 @@ public class BkTokenService {
     public String getCrsfToken(String token) {
         return getCookieMap(token).get("bk_csrftoken");
     }
+
 }
