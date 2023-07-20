@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class UniresetRequest {
     private final HttpServletRequest httpRequest;
-    private final JsonObject jsonObject;
+    private final Map jsonObject;
     private final Map<String, String> cookieMap;
     private final String token;
 
@@ -21,7 +21,7 @@ public class UniresetRequest {
     private List<String> ignoreHeaders = Lists.newArrayList("postman-token","content-length","host","connection","cache-control","user-agent","origin","referer"     );
 
 
-    public UniresetRequest(HttpServletRequest httpRequest, JsonObject jsonObject, Map<String, String> cookieMap, String token, Boolean open) {
+    public UniresetRequest(HttpServletRequest httpRequest, Map jsonObject, Map<String, String> cookieMap, String token, Boolean open) {
         this.httpRequest = httpRequest;
         this.jsonObject = jsonObject;
         this.cookieMap = cookieMap;
@@ -33,7 +33,7 @@ public class UniresetRequest {
         return httpRequest;
     }
 
-    public JsonObject getJsonObject() {
+    public Map getJsonObject() {
         return jsonObject;
     }
 

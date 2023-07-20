@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toJsonStirng;
 import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
 
 @Service
@@ -37,12 +38,12 @@ public class BkRequestService {
     private String baseUrl;
 
 
-    public Object openRequestUrl(HttpServletRequest httpRequest, JsonObject jsonObject) {
+    public Object openRequestUrl(HttpServletRequest httpRequest, Map jsonObject) {
         String token = httpRequest.getParameter("token");
-        jsonObject.addProperty("bk_app_code", appCode);
-        jsonObject.addProperty("bk_app_secret", appSecret);
+        jsonObject.put("bk_app_code", appCode);
+        jsonObject.put("bk_app_secret", appSecret);
         Map<String, String> cookieMap = bkTokenService.getCookieMap(token);
-        jsonObject.addProperty("bk_token", cookieMap.get("bk_token"));
+        jsonObject.put("bk_token", cookieMap.get("bk_token"));
         String method = httpRequest.getMethod();
         HttpResponse<JsonNode> httpResponse = getObject(httpRequest, jsonObject, token, cookieMap, method, true);
         Cookies cookies = httpResponse.getCookies();
@@ -61,7 +62,7 @@ public class BkRequestService {
         return object;
     }
 
-    public Object privateRequestUrl(HttpServletRequest httpRequest, JsonObject jsonObject) {
+    public Object privateRequestUrl(HttpServletRequest httpRequest, Map jsonObject) {
         String token = httpRequest.getParameter("token");
         Map<String, String> cookieMap = bkTokenService.getCookieMap(token);
         String method = httpRequest.getMethod();
@@ -72,7 +73,7 @@ public class BkRequestService {
         return httpResponse.getBody();
     }
 
-    private HttpResponse<JsonNode> getObject(HttpServletRequest httpRequest, JsonObject jsonObject, String token, Map<String, String> cookieMap, String method, boolean open) {
+    private HttpResponse<JsonNode> getObject(HttpServletRequest httpRequest, Map jsonObject, String token, Map<String, String> cookieMap, String method, boolean open) {
         HttpResponse<JsonNode> jsonNodeHttpResponse = getJsonNodeHttpResponse(httpRequest, jsonObject, token, cookieMap, method, open);
         JSONObject object = jsonNodeHttpResponse.getBody().getObject();
         Map resultMap = toObject(object.toString(), Map.class);
@@ -83,7 +84,7 @@ public class BkRequestService {
         return jsonNodeHttpResponse;
     }
 
-    private HttpResponse<JsonNode> getJsonNodeHttpResponse(HttpServletRequest httpRequest, JsonObject jsonObject, String token, Map<String, String> cookieMap, String method, boolean open) {
+    private HttpResponse<JsonNode> getJsonNodeHttpResponse(HttpServletRequest httpRequest, Map jsonObject, String token, Map<String, String> cookieMap, String method, boolean open) {
         switch (method) {
             case "GET":
                 return get(new UniresetRequest(httpRequest, jsonObject, cookieMap, token, open));
@@ -101,25 +102,25 @@ public class BkRequestService {
     private HttpResponse<JsonNode> put(UniresetRequest uniresetRequest) {
         HttpServletRequest httpRequest = uniresetRequest.getHttpRequest();
         String requestURI = uniresetRequest.getRealUrl();
-        JsonObject jsonObject = uniresetRequest.getJsonObject();
+        Map jsonObject = uniresetRequest.getJsonObject();
         Map<String, String> cookieMap = uniresetRequest.getCookieMap();
         requestURI = requestURI.replace("bkapi/open/api/", "");
         HttpRequestWithBody request = Unirest.put((uniresetRequest.getOpen() ? openUrl : baseUrl) + requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap));
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        return request.body(jsonObject.toString()).asJson();
+        return request.body(toJsonStirng(jsonObject)).asJson();
     }
 
 
     private HttpResponse<JsonNode> post(UniresetRequest uniresetRequest) {
         HttpServletRequest httpRequest = uniresetRequest.getHttpRequest();
-        JsonObject jsonObject = uniresetRequest.getJsonObject();
+        Map jsonObject = uniresetRequest.getJsonObject();
         Map<String, String> cookieMap = uniresetRequest.getCookieMap();
         String requestURI = uniresetRequest.getRealUrl();
         HttpRequestWithBody request = Unirest.post(((uniresetRequest.getOpen() ? openUrl : baseUrl)) + requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap)).header("Content-Type", "application/json");
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        return request.body(jsonObject.toString()).asJson();
+        return request.body(toJsonStirng(jsonObject)).asJson();
     }
 
     private HttpResponse<JsonNode> get(UniresetRequest uniresetRequest) {
@@ -137,7 +138,7 @@ public class BkRequestService {
         HttpRequestWithBody request = Unirest.delete((uniresetRequest.getOpen() ? openUrl : baseUrl) + requestURI).header("X-Csrftoken", uniresetRequest.getCookieMap().get("bk_csrftoken")).header("Cookie", getCookieStr(uniresetRequest.getCookieMap()));
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, request.getHeaders().get(n).get(0)));
-        return request.body(uniresetRequest.getJsonObject().toString()).asJson();
+        return request.body(toJsonStirng( uniresetRequest.getJsonObject())).asJson();
     }
 
 

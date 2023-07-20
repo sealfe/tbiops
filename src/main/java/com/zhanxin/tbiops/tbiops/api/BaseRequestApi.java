@@ -4,11 +4,20 @@ import com.google.gson.JsonObject;
 import com.zhanxin.tbiops.tbiops.dto.JsonResponse;
 import com.zhanxin.tbiops.tbiops.http.acl.BkRequestService;
 import com.zhanxin.tbiops.tbiops.http.acl.BkTokenService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toJsonStirng;
+import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
 
 /**
  * @author by fengww
@@ -54,14 +63,16 @@ public class BaseRequestApi {
     }
 
 
+    @SneakyThrows
     @RequestMapping("open/api/**")
-    public JsonResponse<Object> openApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
-        jsonObject = Optional.ofNullable(jsonObject).orElse(new JsonObject());
-        return JsonResponse.success(bkRequestService.openRequestUrl(httpRequest, jsonObject));
+    public JsonResponse<Object> openApi(HttpServletRequest httpRequest, @RequestBody(required = false) Map map) {
+
+
+        return JsonResponse.success(bkRequestService.openRequestUrl(httpRequest, map));
     }
 
     @RequestMapping("private/api/**")
-    public JsonResponse<Object> privateApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
+    public JsonResponse<Object> privateApi(HttpServletRequest httpRequest, @RequestBody(required = false) Map jsonObject) {
         return JsonResponse.success(bkRequestService.privateRequestUrl(httpRequest, jsonObject));
     }
 
