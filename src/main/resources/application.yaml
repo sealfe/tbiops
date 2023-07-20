@@ -1,0 +1,6 @@
+server:
+  port: 8080
+base:
+  url:
+  app_code:
+  app_secret:
