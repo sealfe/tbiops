@@ -1,5 +1,5 @@
 server:
-  port: 11901
+  port: 8080
 bk:
   base:
     url: https://bkce7.tobizit.com
