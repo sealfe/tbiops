@@ -34,6 +34,20 @@ public class BaseRequestApi {
     }
 
 
+    @GetMapping("bk_token")
+    public JsonResponse<String> bkToken(@RequestParam String token) {
+        return JsonResponse.success(bkTokenService.getBkToken(token));
+    }
+
+
+    @GetMapping("crsf_token")
+    public JsonResponse<String> crsfToken(@RequestParam String token) {
+        return JsonResponse.success(bkTokenService.getCrsfToken(token));
+    }
+
+
+
+
     @RequestMapping("console/get_version_info/")
     public JsonResponse<Object> getCookie(@RequestParam String token) {
         return JsonResponse.success(bkTokenService.requestUrl("console/get_version_info/", token));
@@ -43,12 +57,12 @@ public class BaseRequestApi {
     @RequestMapping("open/api/**")
     public JsonResponse<Object> openApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
         jsonObject = Optional.ofNullable(jsonObject).orElse(new JsonObject());
-        return JsonResponse.success(bkRequestService.openRequestUrl(httpRequest,jsonObject));
+        return JsonResponse.success(bkRequestService.openRequestUrl(httpRequest, jsonObject));
     }
 
     @RequestMapping("private/api/**")
     public JsonResponse<Object> privateApi(HttpServletRequest httpRequest, @RequestBody(required = false) JsonObject jsonObject) {
-        return JsonResponse.success(bkRequestService.privateRequestUrl(httpRequest,jsonObject));
+        return JsonResponse.success(bkRequestService.privateRequestUrl(httpRequest, jsonObject));
     }
 
 

@@ -94,4 +94,11 @@ public class BkTokenService {
     }
 
 
+    public String getBkToken(String token) {
+        return getCookieMap(token).get("bk_token");
+    }
+
+    public String getCrsfToken(String token) {
+        return getCookieMap(token).get("bk_csrftoken");
+    }
 }
