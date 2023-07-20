@@ -79,8 +79,8 @@ public class BkRequestService {
         HttpRequestWithBody request = Unirest.put((uniresetRequest.getOpen() ? openUrl : baseUrl ) + requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap));
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        request.body(jsonObject);
-        return request.asObject(Object.class);
+        request.body(jsonObject.toString());
+        return request.asJson();
     }
 
 
@@ -89,11 +89,11 @@ public class BkRequestService {
         JsonObject jsonObject = uniresetRequest.getJsonObject();
         Map<String, String> cookieMap = uniresetRequest.getCookieMap();
         String requestURI = uniresetRequest.getRealUrl();
-        HttpRequestWithBody request = Unirest.post(((uniresetRequest.getOpen() ? openUrl : baseUrl ) )+ requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap));
+        HttpRequestWithBody request = Unirest.post(((uniresetRequest.getOpen() ? openUrl : baseUrl ) )+ requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap)).header("Content-Type", "application/json");
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        request.body(jsonObject);
-        return request.asObject(Object.class);
+        request.body(jsonObject.toString());
+        return request.asJson();
     }
 
     private HttpResponse get(UniresetRequest uniresetRequest) {
@@ -111,8 +111,8 @@ public class BkRequestService {
         HttpRequestWithBody request = Unirest.delete((uniresetRequest.getOpen() ? openUrl : baseUrl ) + requestURI).header("X-Csrftoken", uniresetRequest.getCookieMap().get("bk_csrftoken")).header("Cookie", getCookieStr(uniresetRequest.getCookieMap()));
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, request.getHeaders().get(n).get(0)));
-        request.body(uniresetRequest.getJsonObject());
-        return request.asObject(Object.class);
+        request.body(uniresetRequest.getJsonObject().toString());
+        return request.asJson();
     }
 
 
