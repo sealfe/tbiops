@@ -1,16 +1,18 @@
 package com.zhanxin.tbiops.tbiops.http.acl;
 
+import com.zhanxin.tbiops.tbiops.dto.JsonException;
 import com.zhanxin.tbiops.tbiops.repository.TokenCookie;
 import kong.unirest.*;
+import kong.unirest.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
 
 /**
  * @author by fengww
@@ -34,7 +36,12 @@ public class BkTokenService {
                 .field("csrfmiddlewaretoken", bkloginCsrftoken)
                 .field("username", username)
                 .field("password", password).cookie(collect);
-        HttpResponse<Object> object = body.asObject(Object.class);
+        HttpResponse<JsonNode> object = body.asJson();
+        JSONObject jsonObject = object.getBody().getObject();
+        Map resultMap = toObject(jsonObject.toString(), Map.class);
+        if (Objects.equals(resultMap.get("result"), false)) {
+            throw new JsonException(resultMap.getOrDefault("code", "").toString(), resultMap.getOrDefault("message", "").toString());
+        }
         Cookies cookies = object.getCookies();
         Map<String, String> newCookieMap = cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
         String token = UUID.randomUUID().toString();
@@ -45,7 +52,6 @@ public class BkTokenService {
 
 
     public Map<String, String> getLoginCookieMap() {
-        Unirest.config().verifySsl(false);
         HttpResponse<Object> object = Unirest.get(baseUrl + "/login/?c_url=/").asObject(Object.class);
         Cookies cookies = object.getCookies();
         return cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
