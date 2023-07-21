@@ -89,6 +89,10 @@ public class BkRequestService {
         Map resultMap = toObject(object.toString(), Map.class);
 
         if (resultMap.get("result").equals(false)) {
+            if (resultMap.containsKey("bk_error_code")) {
+                throw new JsonException(resultMap.getOrDefault("bk_error_code", "").toString(), resultMap.getOrDefault("bk_error_msg", "").toString());
+            }
+
             throw new JsonException(resultMap.getOrDefault("code", "").toString(), resultMap.getOrDefault("message", "").toString());
         }
         return jsonNodeHttpResponse;
@@ -132,12 +136,13 @@ public class BkRequestService {
             request.header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
         }
         List<String> headerNames = uniresetRequest.getHeaderNames();
-        headerNames.forEach(n ->{
-            if(httpRequest.getHeader(n)!=null){
+        headerNames.forEach(n -> {
+            if (httpRequest.getHeader(n) != null) {
                 request.header(n, httpRequest.getHeader(n));
             }
-        } );
-        return request.body(toJsonStirng(jsonObject)).asJson();
+        });
+        RequestBodyEntity body = request.body(toJsonStirng(jsonObject));
+        return body.asJson();
     }
 
     private HttpResponse<JsonNode> get(UniresetRequest uniresetRequest) {
