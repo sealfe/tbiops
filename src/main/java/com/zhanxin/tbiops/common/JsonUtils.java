@@ -1,4 +1,4 @@
-package com.zhanxin.tbiops.tbiops.common;
+package com.zhanxin.tbiops.common;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;

@@ -1,4 +1,4 @@
-package com.zhanxin.tbiops.tbiops.config;
+package com.zhanxin.tbiops.config;
 
 import com.google.common.collect.Maps;
 import lombok.Getter;

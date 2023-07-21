@@ -1,7 +1,8 @@
-package com.zhanxin.tbiops.tbiops.http.acl;
+package com.zhanxin.tbiops.http.acl;
 
-import com.zhanxin.tbiops.tbiops.dto.JsonException;
-import com.zhanxin.tbiops.tbiops.repository.RedisService;
+import com.zhanxin.tbiops.common.JsonUtils;
+import com.zhanxin.tbiops.dto.JsonException;
+import com.zhanxin.tbiops.repository.RedisService;
 import kong.unirest.*;
 import kong.unirest.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
 
 /**
  * @author by fengww
@@ -44,7 +43,7 @@ public class BkTokenService {
                 .field("password", password).cookie(collect);
         HttpResponse<JsonNode> object = body.asJson();
         JSONObject jsonObject = object.getBody().getObject();
-        Map resultMap = toObject(jsonObject.toString(), Map.class);
+        Map resultMap = JsonUtils.toObject(jsonObject.toString(), Map.class);
         if (Objects.equals(resultMap.get("result"), false)) {
             throw new JsonException(resultMap.getOrDefault("code", "1023").toString(), resultMap.getOrDefault("message", "账户或者密码错误，请重新输入").toString());
         }

@@ -1,4 +1,4 @@
-package com.zhanxin.tbiops.tbiops.config;
+package com.zhanxin.tbiops.config;
 
 import kong.unirest.Unirest;
 import org.springframework.stereotype.Component;

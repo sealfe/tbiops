@@ -1,6 +1,6 @@
-package com.zhanxin.tbiops.tbiops.config;
+package com.zhanxin.tbiops.config;
 
-import com.zhanxin.tbiops.tbiops.repository.RedisService;
+import com.zhanxin.tbiops.repository.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

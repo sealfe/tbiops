@@ -1,12 +1,9 @@
-package com.zhanxin.tbiops.tbiops.common;
+package com.zhanxin.tbiops.common;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MapUtilsTest {
 

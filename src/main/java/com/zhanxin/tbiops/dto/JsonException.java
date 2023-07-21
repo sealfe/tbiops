@@ -1,4 +1,4 @@
-package com.zhanxin.tbiops.tbiops.dto;
+package com.zhanxin.tbiops.dto;
 
 /**
  * @author by fengww

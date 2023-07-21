@@ -1,7 +1,7 @@
-package com.zhanxin.tbiops.tbiops.config;
+package com.zhanxin.tbiops.config;
 
-import com.zhanxin.tbiops.tbiops.dto.JsonException;
-import com.zhanxin.tbiops.tbiops.dto.JsonResponse;
+import com.zhanxin.tbiops.dto.JsonException;
+import com.zhanxin.tbiops.dto.JsonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;

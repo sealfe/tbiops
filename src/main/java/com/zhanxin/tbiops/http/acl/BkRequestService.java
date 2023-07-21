@@ -1,6 +1,7 @@
-package com.zhanxin.tbiops.tbiops.http.acl;
+package com.zhanxin.tbiops.http.acl;
 
-import com.zhanxin.tbiops.tbiops.dto.JsonException;
+import com.zhanxin.tbiops.common.JsonUtils;
+import com.zhanxin.tbiops.dto.JsonException;
 import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -13,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toJsonStirng;
-import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
 
 @Service
 public class BkRequestService {
@@ -52,10 +50,10 @@ public class BkRequestService {
         if (object.has("data")) {
             Object data = object.get("data");
             if (data instanceof JSONObject) {
-                return toObject(object.getJSONObject("data").toString(), Map.class);
+                return JsonUtils.toObject(object.getJSONObject("data").toString(), Map.class);
             }
             if (data instanceof JSONArray) {
-                return toObject(object.getJSONArray("data").toString(), List.class);
+                return JsonUtils.toObject(object.getJSONArray("data").toString(), List.class);
             }
             return data;
         }
@@ -73,10 +71,10 @@ public class BkRequestService {
         if (object.has("data")) {
             Object data = object.get("data");
             if (data instanceof JSONObject) {
-                return toObject(object.getJSONObject("data").toString(), Map.class);
+                return JsonUtils.toObject(object.getJSONObject("data").toString(), Map.class);
             }
             if (data instanceof JSONArray) {
-                return toObject(object.getJSONArray("data").toString(), List.class);
+                return JsonUtils.toObject(object.getJSONArray("data").toString(), List.class);
             }
             return data;
         }
@@ -86,7 +84,7 @@ public class BkRequestService {
     private HttpResponse<JsonNode> getObject(HttpServletRequest httpRequest, Map jsonObject, String token, Map<String, String> cookieMap, String method, boolean open) {
         HttpResponse<JsonNode> jsonNodeHttpResponse = getJsonNodeHttpResponse(httpRequest, jsonObject, token, cookieMap, method, open);
         JSONObject object = jsonNodeHttpResponse.getBody().getObject();
-        Map resultMap = toObject(object.toString(), Map.class);
+        Map resultMap = JsonUtils.toObject(object.toString(), Map.class);
 
         if (resultMap.get("result").equals(false)) {
             if (resultMap.containsKey("bk_error_code")) {
@@ -122,7 +120,7 @@ public class BkRequestService {
         HttpRequestWithBody request = Unirest.put((uniresetRequest.getOpen() ? openUrl : uniresetRequest.baseUrl()) + requestURI).header("X-Csrftoken", cookieMap.get("bk_csrftoken")).header("Cookie", getCookieStr(cookieMap));
         List<String> headerNames = uniresetRequest.getHeaderNames();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        return request.body(toJsonStirng(jsonObject)).asJson();
+        return request.body(JsonUtils.toJsonStirng(jsonObject)).asJson();
     }
 
 
@@ -141,7 +139,7 @@ public class BkRequestService {
                 request.header(n, httpRequest.getHeader(n));
             }
         });
-        RequestBodyEntity body = request.body(toJsonStirng(jsonObject));
+        RequestBodyEntity body = request.body(JsonUtils.toJsonStirng(jsonObject));
         return body.asJson();
     }
 
@@ -161,7 +159,7 @@ public class BkRequestService {
         List<String> headerNames = uniresetRequest.getHeaderNames();
         HttpServletRequest httpRequest = uniresetRequest.getHttpRequest();
         headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
-        return request.body(toJsonStirng(uniresetRequest.getJsonObject())).asJson();
+        return request.body(JsonUtils.toJsonStirng(uniresetRequest.getJsonObject())).asJson();
     }
 
 

@@ -14,3 +14,14 @@ spring:
     port: 28887
     database: 9
     password: 5_m93cTzeL:C7FH
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://cd-cdb-baf5acnc.sql.tencentcdb.com:63959/bkce?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: ZzrYCnLrggE38
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        hbm2ddl:
+          auto: update

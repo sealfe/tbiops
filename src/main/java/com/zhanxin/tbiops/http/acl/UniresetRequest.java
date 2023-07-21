@@ -1,13 +1,12 @@
-package com.zhanxin.tbiops.tbiops.http.acl;
+package com.zhanxin.tbiops.http.acl;
 
 import com.google.common.collect.Lists;
+import com.zhanxin.tbiops.config.UrlConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-
-import static com.zhanxin.tbiops.tbiops.config.UrlConfig.moduleMap;
 
 public class UniresetRequest {
 
@@ -80,6 +79,6 @@ public class UniresetRequest {
 
 
     public String baseUrl() {
-        return moduleMap.get(module);
+        return UrlConfig.moduleMap.get(module);
     }
 }

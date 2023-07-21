@@ -1,4 +1,4 @@
-package com.zhanxin.tbiops.tbiops.common;
+package com.zhanxin.tbiops.common;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
