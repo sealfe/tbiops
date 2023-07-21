@@ -159,7 +159,8 @@ public class BkRequestService {
         String requestURI = uniresetRequest.getRealUrl();
         HttpRequestWithBody request = Unirest.delete((uniresetRequest.getOpen() ? openUrl : uniresetRequest.baseUrl()) + requestURI).header("X-Csrftoken", uniresetRequest.getCookieMap().get("bk_csrftoken")).header("Cookie", getCookieStr(uniresetRequest.getCookieMap()));
         List<String> headerNames = uniresetRequest.getHeaderNames();
-        headerNames.forEach(n -> request.header(n, request.getHeaders().get(n).get(0)));
+        HttpServletRequest httpRequest = uniresetRequest.getHttpRequest();
+        headerNames.forEach(n -> request.header(n, httpRequest.getHeader(n)));
         return request.body(toJsonStirng(uniresetRequest.getJsonObject())).asJson();
     }
 
