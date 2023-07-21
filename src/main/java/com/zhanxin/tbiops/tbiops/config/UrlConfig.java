@@ -18,16 +18,14 @@ import java.util.Map;
 public class UrlConfig {
 
 
-    @Value("${bk.base.cmdb_url}")
-    public static String cmdbUrl;
 
 
     public static Map<String, String> moduleMap = Maps.newHashMap();
 
 
-    public UrlConfig(@Value("${bk.base.cmdb_url}") String cmdbUrl) {
-        UrlConfig.cmdbUrl = cmdbUrl;
+    public UrlConfig(@Value("${bk.base.cmdb_url}") String cmdbUrl, @Value("${bk.base.cmdb_inner_url}") String cmdbInnerUrl) {
         moduleMap.put("cmdb", cmdbUrl);
+        moduleMap.put("cmdb_inner", cmdbInnerUrl);
     }
 
 
