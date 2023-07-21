@@ -1,13 +1,15 @@
 package com.zhanxin.tbiops.tbiops.http.acl;
 
 import com.zhanxin.tbiops.tbiops.dto.JsonException;
-import com.zhanxin.tbiops.tbiops.repository.TokenCookie;
+import com.zhanxin.tbiops.tbiops.repository.RedisService;
 import kong.unirest.*;
 import kong.unirest.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,9 @@ public class BkTokenService {
 
     @Value("${bk.base.url}")
     private String baseUrl;
+
+    @Autowired
+    private RedisService redisService;
 
 
     public String getToken(String username, String password) {
@@ -45,7 +50,10 @@ public class BkTokenService {
         Map<String, String> newCookieMap = cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
         String token = UUID.randomUUID().toString();
         cookieMap.putAll(newCookieMap);
-        TokenCookie.addCookie(token, cookieMap);
+        ZonedDateTime bkToken = cookies.stream().filter(n -> n.getName().equals("bk_token")).map(n -> n.getExpiration()).findFirst().orElse(null);
+        //get second time between bk_token expire time and now time ,then set expire time
+        long second = bkToken.toEpochSecond() - ZonedDateTime.now().toEpochSecond();
+        redisService.addCookie(token, cookieMap, second);
         return token;
     }
 
@@ -58,7 +66,7 @@ public class BkTokenService {
 
 
     public Map<String, String> getCookieMap(String token) {
-        Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
+        Map<String, String> cookieMap = redisService.getCookieMap(token);
         String cookieStr = cookieMap.entrySet().stream().map(n -> n.getKey() + "=" + n.getValue()).collect(Collectors.joining(";"));
         GetRequest cookie = Unirest.get(baseUrl + "/console/").header("Cookie", cookieStr).header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
         HttpResponse<Object> object = cookie.asObject(Object.class);
@@ -67,13 +75,13 @@ public class BkTokenService {
         cookies.stream().forEach(n -> {
             cookieMap.put(n.getName(), n.getValue());
         });
-        TokenCookie.addCookie(token, cookieMap);
+        redisService.addCookie(token, cookieMap);
         return cookieMap;
     }
 
 
-     public Map<String, String> getPrivateCookieMap(String token) {
-        Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
+    public Map<String, String> getPrivateCookieMap(String token) {
+        Map<String, String> cookieMap = redisService.getCookieMap(token);
         String cookieStr = cookieMap.entrySet().stream().map(n -> n.getKey() + "=" + n.getValue()).collect(Collectors.joining(";"));
         GetRequest cookie = Unirest.get("http://cmdb.bkce7.tobizit.com/#/index").header("Cookie", cookieStr).header("X-Csrftoken", cookieMap.get("bk_csrftoken"));
         HttpResponse<Object> object = cookie.asObject(Object.class);
@@ -82,14 +90,9 @@ public class BkTokenService {
         cookies.stream().forEach(n -> {
             cookieMap.put(n.getName(), n.getValue());
         });
-        TokenCookie.addCookie(token, cookieMap);
+        redisService.addCookie(token, cookieMap);
         return cookieMap;
     }
-
-
-
-
-
 
 
     public Object requestUrl(String s, String token) {
@@ -101,7 +104,7 @@ public class BkTokenService {
         cookies.stream().forEach(n -> {
             cookieMap1.put(n.getName(), n.getValue());
         });
-        TokenCookie.addCookie(token, cookieMap1);
+        redisService.addCookie(token, cookieMap1);
         return object.getBody();
     }
 
@@ -111,11 +114,11 @@ public class BkTokenService {
 
 
     public void updateCookieMap(String token, Cookies cookies) {
-        Map<String, String> cookieMap = TokenCookie.getCookieMap(token);
+        Map<String, String> cookieMap = redisService.getCookieMap(token);
         cookies.forEach(n -> {
             cookieMap.put(n.getName(), n.getValue());
         });
-        TokenCookie.addCookie(token, cookieMap);
+        redisService.addCookie(token, cookieMap);
     }
 
 

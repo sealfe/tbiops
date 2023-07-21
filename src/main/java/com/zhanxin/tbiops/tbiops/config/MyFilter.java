@@ -1,7 +1,7 @@
 package com.zhanxin.tbiops.tbiops.config;
 
-import com.zhanxin.tbiops.tbiops.dto.JsonException;
-import com.zhanxin.tbiops.tbiops.repository.TokenCookie;
+import com.zhanxin.tbiops.tbiops.repository.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,10 @@ import java.io.IOException;
 @Component
 @Order(1)
 public class MyFilter implements Filter {
+
+
+    @Autowired
+    private RedisService redisService;
 
 
     @Override
@@ -29,7 +33,7 @@ public class MyFilter implements Filter {
                 ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is null.");
                 return;
             }
-            Boolean cookieValid = TokenCookie.cookieValid(token);
+            Boolean cookieValid = redisService.cookieValid(token);
             if (!cookieValid) {
                 ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is not valid.");
                 return;
