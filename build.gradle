@@ -31,12 +31,10 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     //import spring redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    //import spring mongodb
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     //import spring redis data
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    //import spring mongodb data
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 }
 
 tasks.named('test') {

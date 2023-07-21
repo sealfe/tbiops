@@ -9,8 +9,6 @@ bk:
     cmdb_url: http://cmdb.bkce7.tobizit.com/api
 
 spring:
-  mongodb:
-    uri: mongodb://10.244.3.87:27017/bkce
   redis:
     host: cd-crs-pj131lww.sql.tencentcdb.com
     port: 28887
