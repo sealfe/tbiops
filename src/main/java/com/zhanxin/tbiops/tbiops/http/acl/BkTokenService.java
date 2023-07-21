@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.zhanxin.tbiops.tbiops.common.JsonUtils.toObject;
@@ -50,10 +52,9 @@ public class BkTokenService {
         Map<String, String> newCookieMap = cookies.stream().filter(n -> StringUtils.isNotBlank(n.getValue())).collect(Collectors.toMap(n -> n.getName(), n -> n.getValue()));
         String token = UUID.randomUUID().toString();
         cookieMap.putAll(newCookieMap);
-        ZonedDateTime bkToken = cookies.stream().filter(n -> n.getName().equals("bk_token")).map(n -> n.getExpiration()).findFirst().orElse(null);
+        Integer maxAge = cookies.stream().filter(n -> n.getName().equals("bk_token")).map(n -> n.getMaxAge()).findFirst().orElse(null);
         //get second time between bk_token expire time and now time ,then set expire time
-        long second = bkToken.toEpochSecond() - ZonedDateTime.now().toEpochSecond();
-        redisService.addCookie(token, cookieMap, second);
+        redisService.addCookie(token, cookieMap, maxAge);
         return token;
     }
 

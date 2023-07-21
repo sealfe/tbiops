@@ -1,5 +1,5 @@
 server:
-  port: 11901
+  port: 8080
 bk:
   base:
     url: https://bkce7.tobizit.com
@@ -12,6 +12,7 @@ spring:
   mongodb:
     uri: mongodb://10.244.3.87:27017/bkce
   redis:
-    host: 10.244.3.85
-    port: 6379
+    host: cd-crs-pj131lww.sql.tencentcdb.com
+    port: 28887
     database: 9
+    password: 5_m93cTzeL:C7FH
