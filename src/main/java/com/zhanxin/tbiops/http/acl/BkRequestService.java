@@ -22,6 +22,10 @@ public class BkRequestService {
     private BkTokenService bkTokenService;
 
 
+    @Autowired
+    private ErrorMessageService errorMessageService;
+
+
     @Value("${bk.base.app_code}")
     private String appCode;
 
@@ -30,10 +34,6 @@ public class BkRequestService {
 
     @Value("${bk.base.open_url}")
     private String openUrl;
-
-    @Value("${bk.base.url}")
-    private String baseUrl;
-
 
 
     public Object openRequestUrl(HttpServletRequest httpRequest, Map jsonObject) {
@@ -88,10 +88,12 @@ public class BkRequestService {
 
         if (resultMap.get("result").equals(false)) {
             if (resultMap.containsKey("bk_error_code")) {
-                throw new JsonException(resultMap.getOrDefault("bk_error_code", "").toString(), resultMap.getOrDefault("bk_error_msg", "").toString());
+                String bkErrorMsg = errorMessageService.getCnMessage(resultMap.getOrDefault("bk_error_msg", "").toString(), httpRequest.getRequestURL().toString());
+                throw new JsonException(resultMap.getOrDefault("bk_error_code", "").toString(), bkErrorMsg);
             }
 
-            throw new JsonException(resultMap.getOrDefault("code", "").toString(), resultMap.getOrDefault("message", "").toString());
+            String message = errorMessageService.getCnMessage(resultMap.getOrDefault("message", "").toString(), httpRequest.getRequestURL().toString());
+            throw new JsonException(resultMap.getOrDefault("code", "").toString(), message);
         }
         return jsonNodeHttpResponse;
     }

@@ -52,7 +52,6 @@ public class BkTokenService {
         String token = UUID.randomUUID().toString();
         cookieMap.putAll(newCookieMap);
         Integer maxAge = cookies.stream().filter(n -> n.getName().equals("bk_token")).map(n -> n.getMaxAge()).findFirst().orElse(null);
-        //get second time between bk_token expire time and now time ,then set expire time
         redisService.addCookie(token, cookieMap, maxAge);
         return token;
     }
@@ -106,10 +105,6 @@ public class BkTokenService {
         });
         redisService.addCookie(token, cookieMap1);
         return object.getBody();
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
     }
 
 
