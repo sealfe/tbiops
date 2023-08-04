@@ -27,7 +27,8 @@ public class ErrorMessageService {
         for (Map.Entry<String, String> stringStringEntry : errorMsgMap.entrySet()) {
             String key = stringStringEntry.getKey();
             String value = stringStringEntry.getValue();
-            if (bkErrorMsg.contains(key) && requestURL.contains(key)) {
+            String[] splitKey = key.split("_");
+            if (bkErrorMsg.contains(splitKey[0]) && (splitKey.length == 1 || requestURL.contains(splitKey[1]))) {
                 return value;
             }
         }
